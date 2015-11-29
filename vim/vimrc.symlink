@@ -1,4 +1,202 @@
-syntax on
+execute pathogen#infect()
 
-" Wrap gitcommit file types at the appropriate length
-filetype indent plugin on
+set runtimepath^=~/.vim/bundle/ctrlp.vim
+
+set term=xterm
+set t_Co=256
+let &t_AB="\e[48;5;%dm"
+let &t_AF="\e[38;5;%dm"
+
+if has("gui_running")
+	set guifont=Consolas:h16
+endif
+
+" Closing vim after last window closed that is not NERDTree window
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+
+" Make Vim more useful
+set nocompatible
+" Use the OS clipboard by default (on versions compiled with `+clipboard`)
+set clipboard=unnamed
+" Enhance command-line completion
+set wildmenu
+" Allow cursor keys in insert mode
+set esckeys
+" Allow backspace in insert mode
+set backspace=indent,eol,start
+" Optimize for fast terminal connections
+set ttyfast
+" Add the g flag to search/replace by default
+set gdefault
+" Use UTF-8 without BOM
+set encoding=utf-8 nobomb
+" Change mapleader
+let mapleader="\<Space>"
+" Don’t add empty newlines at the end of files
+set binary
+set noeol
+" Centralize backups, swapfiles and undo history
+set backupdir=~/.vim/backups
+set directory=~/.vim/swaps
+if exists("&undodir")
+	set undodir=~/.vim/undo
+endif
+
+" Respect modeline in files
+set modeline
+set modelines=4
+" Enable per-directory .vimrc files and disable unsafe commands in them
+set exrc
+set secure
+" Enable line numbers
+set number
+" Enable syntax highlighting
+syntax on
+" Highlight current line
+set cursorline
+" Make tabs as wide as two spaces
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set noexpandtab
+
+" Show “invisible” characters
+set lcs=tab:▸\ ,trail:·,eol:¬,nbsp:_
+set list
+" Highlight searches
+set hlsearch
+" Ignore case of searches
+set ignorecase
+" Highlight dynamically as pattern is typed
+set incsearch
+" Always show status line
+set laststatus=2
+" Enable mouse in all modes
+set mouse=a
+" Disable error bells
+set noerrorbells
+" Don’t reset cursor to start of line when moving around.
+set nostartofline
+" Show the cursor position
+set ruler
+" Don’t show the intro message when starting Vim
+set shortmess=atI
+" Show the current mode
+set showmode
+" Show the filename in the window titlebar
+set title
+" Show the (partial) command as it’s being typed
+set showcmd
+" Use relative line numbers
+if exists("&relativenumber")
+	set relativenumber
+	au BufReadPost * set relativenumber
+endif
+" Start scrolling three lines before the horizontal window border
+set scrolloff=3
+
+" Strip trailing whitespace
+function! StripWhitespace()
+	let save_cursor = getpos(".")
+	let old_query = getreg('/')
+	:%s/\s\+$//e
+	call setpos('.', save_cursor)
+	call setreg('/', old_query)
+endfunction
+
+" Nice key mapping from all over the places
+ vmap <Leader>y "+y
+ vmap <Leader>d "+d
+ nmap <Leader>p "+p
+ nmap <Leader>P "+P
+ vmap <Leader>p "+p
+ vmap <Leader>P "+P
+ nnoremap <Leader><Tab> <C-^>
+ nnoremap <Leader>y :!annotate expand('%:p') " what?
+
+" map fuzzyfinder (CtrlP) plugin
+noremap <Leader>o :CtrlP<CR>
+nmap <silent> <leader>r :CtrlPBuffer<cr>
+let g:ctrlp_map='<leader>t'
+let g:ctrlp_dotfiles=1
+let g:ctrlp_working_path_mode = 'ra'
+
+nnoremap <Leader>h :noh<CR>
+nnoremap <Leader>b :b#<CR>
+
+vnoremap <silent> y y`]
+vnoremap <silent> p p`]
+nnoremap <silent> p p`]
+
+nnoremap <CR> G
+nnoremap <BS> gg
+nnoremap <Leader><Leader> :w<CR>
+nnoremap <Leader>q :wq<CR>
+nnoremap <Leader>c :q!<CR>
+nnoremap <Leader>v V
+nnoremap <Leader>g gf
+
+" Remove trailing whitespaces
+nnoremap <silent> <Leader><BS> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let
+@/=_s<Bar>:nohl<CR>:w<CR>
+
+noremap H ^
+noremap L $
+
+map <Leader>n :NERDTreeToggle<CR>
+vmap v <Plug>(expand_region_expand)
+vmap <C-v> <Plug>(expand_region_shrink)
+
+map <Leader>e :e .<CR>
+map <Leader>E :E .<CR>
+
+" Fugitive Shortcuts
+nmap <silent> <leader>gs :Gstatus<cr>
+nmap <leader>ge :Gedit<cr>
+nmap <silent><leader>gr :Gread<cr>
+nmap <silent><leader>gb :Gblame<cr>
+
+noremap <leader>ss :call StripWhitespace()<CR>
+" Save a file as root
+noremap <leader>W :w !sudo tee % > /dev/null<CR>
+nnoremap <Leader><Leader> :w<CR>
+nnoremap <Leader>q :q<CR>
+nmap <Leader>h :noh<CR>
+nmap <Leader>o :CtrlP<CR>
+let g:EasyMotion_do_mapping = 0 " Disable default mappings
+
+" Bi-directional find motion
+" Jump to anywhere you want with minimal keystrokes, with just one key binding.
+" `s{char}{label}`
+nmap s <Plug>(easymotion-s)
+" or
+" `s{char}{char}{label}`
+" Need one more keystroke, but on average, it may be more comfortable.
+nmap s <Plug>(easymotion-s2)
+
+" Turn on case insensitive feature
+let g:EasyMotion_smartcase = 1
+
+" JK motions: Line motions
+map <Leader>j <Plug>(easymotion-j)
+map <Leader>k <Plug>(easymotion-k)
+
+" search the nearest ancestor that contains .git, .hg, .svn
+let g:ctrlp_working_path_mode = 2
+
+
+" airline options
+" let g:airline_powerline_fonts=1
+" let g:airline_left_sep=
+" let g:airline_right_sep=''
+" let g:airline_theme='base16'
+
+
+" Automatic commands
+if has("autocmd")
+	" Enable file type detection
+	filetype on
+	filetype plugin indent on
+	" Treat .json files as .js
+	autocmd BufNewFile,BufRead *.json setfiletype json syntax=javascript
+endif
