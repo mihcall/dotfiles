@@ -1,4 +1,79 @@
-execute pathogen#infect()
+call plug#begin()
+
+" Really nice prompt
+Plug 'bling/vim-airline'
+let g:airline_theme='powerlineish'
+let g:airline_left_sep=''
+let g:airline_right_sep=''
+let g:airline_section_z=''
+
+" Press v over and over again to expand selection
+Plug 'terryma/vim-expand-region'
+vmap v <Plug>(expand_region_expand)
+vmap <C-v> <Plug>(expand_region_shrink)
+
+" Awesome autocompletion
+" Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
+
+Plug 'mhinz/vim-sayonara', { 'on': 'Sayonara' }
+
+" Lightning fast :Ag searcher
+Plug 'rking/ag.vim'
+
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-rsi'
+Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-sleuth'
+Plug 'tpope/vim-unimpaired'
+
+" Allow to :Rename files
+Plug 'danro/rename.vim'
+
+" Automatically find root project directory
+Plug 'airblade/vim-rooter'
+let g:rooter_disable_map = 1
+let g:rooter_silent_chdir = 1
+
+" Expand / wrap hashes etc.
+Plug 'AndrewRadev/splitjoin.vim'
+nmap sj :SplitjoinSplit<cr>
+nmap sk :SplitjoinJoin<cr>
+
+Plug 'moll/vim-node', { 'for': 'javascript' }
+
+" Nice column aligning with <Enter>
+Plug 'junegunn/vim-easy-align'
+vmap <Enter> <Plug>(EasyAlign)
+nmap <Leader>a <Plug>(EasyAlign)
+
+Plug 'michaeljsmith/vim-indent-object' " ii / ai
+
+" For more reliable indenting and performance
+set foldmethod=indent
+set fillchars="fold: "
+
+" Nice file browsing with -
+Plug 'eiginn/netrw'
+let g:netrw_altfile = 1
+Plug 'tpope/vim-vinegar'
+
+" Set nice 80-characters limiter
+" execute "set colorcolumn=" . join(range(81,335), ',')
+" hi ColorColumn guibg=#262626 ctermbg=235
+
+" Allow for adding github comments
+Plug 'mattn/webapi-vim'
+Plug 'moznion/github-commit-comment.vim'
+command! -nargs=* Comment call github_commit_comment#comment_line(<f-args>)
+
+" Better search tools
+Plug 'vim-scripts/IndexedSearch'
+Plug 'vim-scripts/SmartCase'
+Plug 'vim-scripts/gitignore'
+
+call plug#end()
 
 set runtimepath^=~/.vim/bundle/ctrlp.vim
 
@@ -131,10 +206,14 @@ nnoremap <silent> p p`]
 nnoremap <CR> G
 nnoremap <BS> gg
 nnoremap <Leader><Leader> :w<CR>
-nnoremap <Leader>q :wq<CR>
-nnoremap <Leader>c :q!<CR>
+nnoremap <Leader>q :Sayonara<CR>
+nnoremap <Leader>c :Sayonara!<CR>
+nnoremap <Leader>s :wq<CR>
 nnoremap <Leader>v V
 nnoremap <Leader>g gf
+
+" Remove trailing whitespaces
+nnoremap <silent> <Leader><BS> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>:w<CR>
 
 " Remove trailing whitespaces
 nnoremap <silent> <Leader><BS> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let
@@ -184,12 +263,12 @@ map <Leader>k <Plug>(easymotion-k)
 " search the nearest ancestor that contains .git, .hg, .svn
 let g:ctrlp_working_path_mode = 2
 
+silent! colorscheme wombat256mod
 
-" airline options
-" let g:airline_powerline_fonts=1
-" let g:airline_left_sep=
-" let g:airline_right_sep=''
-" let g:airline_theme='base16'
+command! -bar Tags if !empty(tagfiles()) | call fzf#run({
+\   'source': "sed '/^\\!/d;s/\t.*//' " . join(tagfiles()) . ' | uniq',
+\   'sink':   'tag',
+\ })
 
 
 " Automatic commands
